@@ -68,6 +68,7 @@ export const Header = styled(HeaderComponent)`
   position: sticky;
   top: 0px;
   color: ${props => props.theme.colors.white};
+  z-index: 100;
 
   .header-wrapper{
     display: flex;

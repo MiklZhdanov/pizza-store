@@ -9,6 +9,9 @@ import { GlobalStyle } from 'config/globalStyles';
 import { BaseLayout } from 'atomic/templates/BaseLayout';
 import { MainPage } from 'pages/Main';
 import { CartPage } from 'pages/Cart';
+import { LoginPage } from 'pages/Login';
+import { RegistrationPage } from 'pages/Registration';
+
 
 const App = () => (
   <ThemeProvider theme={theme}>
@@ -18,8 +21,9 @@ const App = () => (
       <BaseLayout>
           <Switch>
            <Route exact path="/" render={() => (<MainPage/>)} />
-           <Route exact path="/product/:id" render={() => (<div>Product page</div>)} />
            <Route exact path="/cart" render={() => (<CartPage/>)} />
+           <Route exact path="/login" render={() => (<LoginPage/>)} />
+           <Route exact path="/register" render={() => (<RegistrationPage/>)} />
            <Route render={() => (<div>404 - page not found</div>)} />
          </Switch>
       </BaseLayout>

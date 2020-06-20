@@ -5,7 +5,7 @@ export const auth = {
   // updateUser: async (data: UserType) =>
   // await request.put(`/user/${data.id}`, data),
   register: async (data: RegistrationRequestType) =>
-  await request.post(`/auth/local`, data),
+  await request.post(`/auth/local/register`, data),
   login: async (data: LoginRequestType) =>
     await request.post(`/auth/local`, data),
 };
