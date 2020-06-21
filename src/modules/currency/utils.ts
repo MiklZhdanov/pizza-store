@@ -1,3 +1,6 @@
+import { useSelector } from 'react-redux';
+import { AppState } from 'store';
+
 const currencies = {
     'eur': {
         short: "€",
@@ -9,6 +12,14 @@ const currencies = {
     }
 }
 
-export const getPriceWithCurrency = ({price, currency = 'eur'}: {price: number, currency?: 'eur' | 'usd'}) => {
-    return `${(currencies[currency].value*price).toFixed(2)} ${currencies[currency].short}`
+export const usePrice = () => {
+    const { currency } = useSelector((state: AppState) => ({
+        currency: state.currency.currentCurrency
+      }))
+
+const getPriceWithCurrency = ({price}: {price: number}) => {
+        return `${(currencies[currency].value*price).toFixed(2)} ${currencies[currency].short}`
+    }
+
+  return {getPriceWithCurrency};
 }

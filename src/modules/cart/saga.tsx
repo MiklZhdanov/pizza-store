@@ -1,6 +1,9 @@
-import { put, takeEvery, select } from 'redux-saga/effects';
+import { put, takeEvery, select, take } from 'redux-saga/effects';
 import {createCart, updateCart} from './actions';
-import {CartActionTypes} from './types';
+import {CartActionTypes, CartType} from './types';
+import { getTotalSum, getTotalItems } from './utils';
+import { updateUser } from 'modules/auth/actions';
+import { AuthActionTypes } from 'modules/auth/types';
 
 export function* cartSaga() {
   const { selectedCart } = yield select(state => state.cart);
@@ -24,9 +27,22 @@ function* addToCartSaga(data: any){
 
 }
 
-function* checkoutCartSaga(){
-  const { selectedCart } = yield select(state => state.cart);
-  console.log(selectedCart)
+function* checkoutCartSaga({payload:{cart, delivery, address}}: {type: string, payload: {cart: CartType, delivery: string, address: string, email: string}}){
+  const { currentUser } = yield select(state => state.auth);
+  const { items } = yield select(state => state.products);
+  if(currentUser){
+    const order = {id: cart.id, totalSum: getTotalSum({products: items, cart}), items: getTotalItems({cart}), address, delivery}
+    yield put(updateUser({
+      ...currentUser,
+      orders: currentUser.orders ? [...currentUser.orders, order] : [order]
+    }));
+    const updatedUser = yield take(AuthActionTypes.UPDATE_USER_SUCCESS);
+    yield put(createCart());
+    const {payload} = yield take(CartActionTypes.CREATE_CART_SUCCESS);
+    yield put(updateUser({...updatedUser.payload, cart: payload.id}))
+  } else {
+    yield put(createCart());
+  }
 }
 
 

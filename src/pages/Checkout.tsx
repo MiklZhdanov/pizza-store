@@ -1,76 +1,109 @@
-import * as React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { styled } from 'config/theme';
-import {CartProductsList} from 'atomic/organisms/CartProductsList';
-import { AppState } from 'store';
-import {addProductToCart, checkoutCart, updateCart} from 'modules/cart/actions';
-import { getTotalSum } from 'modules/cart/utils';
-import { getPriceWithCurrency } from 'modules/currency/utils';
-import { Link } from 'react-router-dom';
-import { Button } from 'atomic/atoms/Button';
+import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { styled } from "config/theme";
+import { AppState } from "store";
+import { Redirect } from "react-router-dom";
+import { CheckoutForm } from "atomic/organisms/forms/CheckoutForm";
+import { usePrice } from "modules/currency/utils";
+import { getTotalSum, getTotalItems } from "modules/cart/utils";
+import { checkoutCart } from "modules/cart/actions";
 
-
-interface ICartPageProps {
+interface ICheckoutPageProps {
   className?: string;
 }
 
-const CartPageComponent: React.FunctionComponent<ICartPageProps> = ({className}) => {
-    const { products, cart } = useSelector((state: AppState) => ({
-        products: state.products.items,
-        loading: state.products.loading,
-        cart: state.cart.selectedCart,
-      }))
-      const dispatch = useDispatch();
-  return <div className={className}>
-    {cart && cart.items.length ? <>
-      <CartProductsList cart={cart} products={products} addToCart={(data)=>{
-        dispatch(addProductToCart(data))
-      }}/>
-      <div className="cart-buttons">
-        <div className="cart-clen-up">
-          <Button text="Empty cart" onClick={()=>{
-            dispatch(updateCart({id:cart.id, items:[] }))
-          }}/>
+const CheckoutPageComponent: React.FunctionComponent<ICheckoutPageProps> = ({
+  className,
+}) => {
+  const { cart, deliveries, user, products, checkoutSuccess } = useSelector(
+    (state: AppState) => ({
+      products: state.products.items,
+      user: state.auth.currentUser,
+      cart: state.cart.selectedCart,
+      checkoutSuccess: state.cart.checkoutSuccess,
+      deliveries: state.delivery.items,
+    })
+  );
+
+  const [delivery, setDelivery] = useState("");
+  const dispatch = useDispatch();
+  const { getPriceWithCurrency } = usePrice();
+
+  return (
+    <div className={className}>
+      {checkoutSuccess ? (
+        <div className="checkout-wrapper">
+          <div className="checkout-wrapper-success">
+            Success! You order <b>№{checkoutSuccess}</b> received. We start cooking
+            your pizza!!!
+          </div>
         </div>
-        <div className="cart-total">
-          {`Total: ${getPriceWithCurrency({price: getTotalSum({products, cart})})}`}
-        </div>
-        <Button text="Checkout" onClick={()=>{
-          dispatch(checkoutCart({id: cart.id}))
-        }}/>
-      </div>
-      </>
-      : <div className="cart-empty">
-        You cart is empty :(  <br/>
-        {`Continue shopping `}<Link to={"/"}>here!</Link>
-      </div>}
-  </div>
+      ) : (
+        <>
+          {cart && cart.items.length ? (
+            <>
+              <div className="checkout-wrapper">
+                <div className="checkout-form">
+                  <CheckoutForm
+                    initialValues={{
+                      email: user?.email || "",
+                      address: user?.address || "",
+                      delivery: "",
+                    }}
+                    deliveries={deliveries}
+                    onChangeDelivery={(delivery) => {
+                      setDelivery(delivery);
+                    }}
+                    onSubmit={(data) => {
+                      dispatch(checkoutCart({ cart, ...data }));
+                      console.log("data", data);
+                    }}
+                  />
+                </div>
+                <div className="checkout-info">
+                  <div className="checkout-info-item">
+                    <span>{`Total sum: `}</span>
+                    <b>
+                      {getPriceWithCurrency({
+                        price:
+                          getTotalSum({ products, cart }) +
+                          (deliveries.find((item) => item.name === delivery)
+                            ?.price || 0),
+                      })}
+                    </b>
+                  </div>
+                  <div className="checkout-info-item">
+                    <span>{`Items: `}</span>
+                    <b>{getTotalItems({ cart })}</b>
+                  </div>
+                </div>
+              </div>
+            </>
+          ) : (
+            <Redirect to="/cart" />
+          )}
+        </>
+      )}
+    </div>
+  );
 };
 
-export const CartPage = styled(CartPageComponent)`
-  .cart-empty{
-    font-size: 36px;
-    line-height: 42px;
-    margin: 40px auto;
-    color: ${props => props.theme.colors.baseText};
-    a{
-      font-size: 36px;
-      color: ${props => props.theme.colors.baseText};
-      text-decoration: underline;
-    }
-  }
-  .cart-buttons{
-    margin-top: 10px;
-    border-top: 1px solid ${props => props.theme.colors.alto};
+export const CheckoutPage = styled(CheckoutPageComponent)`
+  .checkout-wrapper {
     display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    padding: 10px 0;
-    .cart-total{
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    &-success {
+      margin-top: 40px;
+      font-size: 34px;
+      color: ${(props) => props.theme.colors.baseText};
+      b{
+        font-weight: bold;
+      }
+    }
+    .checkout-form {
       margin-right: 20px;
     }
-    .cart-clen-up{
-      flex-grow: 1;
-    }
   }
-`
+`;

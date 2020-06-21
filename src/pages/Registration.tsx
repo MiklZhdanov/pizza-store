@@ -13,8 +13,9 @@ interface IRegistrationPageProps {
 const RegistrationPageComponent: React.FunctionComponent<IRegistrationPageProps> = ({
   className,
 }) => {
-  const { user } = useSelector((state: AppState) => ({
+  const { user, loading } = useSelector((state: AppState) => ({
     user: state.auth.currentUser,
+    loading: state.auth.loading
   }));
   const dispatch = useDispatch();
 
@@ -22,7 +23,7 @@ const RegistrationPageComponent: React.FunctionComponent<IRegistrationPageProps>
     <Redirect to="/" />
   ) : (
     <div className={className}>
-      <RegistrationForm onSubmit={(data)=>{
+      <RegistrationForm loading={loading} onSubmit={(data)=>{
           dispatch(register(data))
       }}/>
     </div>

@@ -4,17 +4,20 @@ import { useFormik } from "formik";
 import { RegistrationRequestType } from "modules/auth/types";
 import { FormGroup } from "atomic/molucules/FormGroup/FormGroup";
 import { Input } from "atomic/atoms/Input";
+import { Textarea } from 'atomic/atoms/Textarea'
 import { Button } from "atomic/atoms/Button";
 import { Link } from "react-router-dom";
 
 interface IRegistrationFormProps {
   className?: string;
   onSubmit(data: RegistrationRequestType): void;
+  loading?: boolean;
   initialValues?: {
     username: string;
     email: string;
     password: string;
     passwordConfirm: string;
+    address: string;
   };
 }
 
@@ -23,12 +26,14 @@ const validate = (values: {
   email: string;
   password: string;
   passwordConfirm: string;
+  address: string;
 }) => {
   const errors: {
     username?: string;
     email?: string;
     password?: string;
     passwordConfirm?: string;
+    address?: string;
   } = {};
   if (!values.username) {
     errors.username = "Required";
@@ -38,6 +43,10 @@ const validate = (values: {
     errors.email = 'Required';
   } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
     errors.email = 'Invalid email address';
+  }
+
+  if (!values.address) {
+    errors.address = "Required";
   }
 
   if (!values.password) {
@@ -60,14 +69,15 @@ const RegistrationFormComponent: React.FunctionComponent<IRegistrationFormProps>
     email: "",
     password: "",
     passwordConfirm: "",
+    address: ""
   },
 }) => {
   const formik = useFormik({
     initialValues,
     validate,
-    onSubmit: ({username, email, password})=>{
+    onSubmit: ({username, email, password, address})=>{
       onSubmit({
-        username, email, password
+        username, email, password, address
       })
     },
   });
@@ -96,6 +106,20 @@ const RegistrationFormComponent: React.FunctionComponent<IRegistrationFormProps>
           name="email"
           placeholder="Email"
           value={formik.values.email}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+        />
+      </FormGroup>
+
+      <FormGroup
+        label="Address"
+        error={formik.touched.address && formik.errors.address}
+      >
+        <Textarea
+          type="text"
+          name="address"
+          placeholder="Address"
+          value={formik.values.address}
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
         />
@@ -131,6 +155,7 @@ const RegistrationFormComponent: React.FunctionComponent<IRegistrationFormProps>
 
       <div className="form-buttons">
         <Button
+          type="submit"
           onClick={() => {
             formik.handleSubmit();
           }}
@@ -145,6 +170,12 @@ const RegistrationFormComponent: React.FunctionComponent<IRegistrationFormProps>
 export const RegistrationForm = styled(RegistrationFormComponent)`
   width: 320px;
   margin: 0 auto;
+  transition: opacity 0.5;
+    ${props => props.loading && `
+        opacity: 0.5;
+        pointer-events: none;
+    `}
+
   .form-buttons {
     margin: 10px 0 0;
     display: flex;

@@ -4,6 +4,7 @@ import callApiSaga from 'modules/callApiSaga';
 import { productsSaga } from 'modules/products/saga';
 import { cartSaga } from 'modules/cart/saga';
 import { authSaga } from 'modules/auth/saga';
+import { deliverySaga } from 'modules/delivery/saga';
 
 const { metaSaga } = Meta;
 const { callApiActionSaga } = callApiSaga;
@@ -15,4 +16,5 @@ export default function* baseSaga() {
   yield fork(productsSaga);
   yield fork(cartSaga);
   yield fork(authSaga);
+  yield fork(deliverySaga);
 }

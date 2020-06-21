@@ -2,7 +2,7 @@ import * as React from 'react';
 import { styled } from 'config/theme';
 import { ProductType } from 'modules/products/types';
 import { Button } from 'atomic/atoms/Button';
-import { getPriceWithCurrency } from 'modules/currency/utils';
+import { usePrice } from 'modules/currency/utils';
 import { QuantityControl } from 'atomic/atoms/QuantityControl';
 
 interface IProductProps {
@@ -13,6 +13,8 @@ interface IProductProps {
 }
 
 const ProductComponent: React.FunctionComponent<IProductProps> = ({className, product, addToCart, quantity}) => {
+    const { getPriceWithCurrency } = usePrice();
+
   return <div className={className}>
         <div className="product-image">
         </div>

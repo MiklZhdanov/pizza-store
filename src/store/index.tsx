@@ -30,7 +30,7 @@ const store = createStore(
   composeWithDevTools(
     applyMiddleware(...middlewares),
     // @ts-ignore
-    persistState(['products', 'cart', 'auth'])
+    persistState(['products', 'cart', 'auth', 'delivery'])
   )
 );
 

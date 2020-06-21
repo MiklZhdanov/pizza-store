@@ -3,11 +3,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { styled } from 'config/theme';
 import {CartProductsList} from 'atomic/organisms/CartProductsList';
 import { AppState } from 'store';
-import {addProductToCart, checkoutCart, updateCart} from 'modules/cart/actions';
+import {addProductToCart, updateCart} from 'modules/cart/actions';
 import { getTotalSum } from 'modules/cart/utils';
-import { getPriceWithCurrency } from 'modules/currency/utils';
+import { usePrice } from 'modules/currency/utils';
 import { Link } from 'react-router-dom';
 import { Button } from 'atomic/atoms/Button';
+import { push } from 'connected-react-router';
 
 
 interface ICartPageProps {
@@ -21,6 +22,7 @@ const CartPageComponent: React.FunctionComponent<ICartPageProps> = ({className})
         cart: state.cart.selectedCart,
       }))
       const dispatch = useDispatch();
+  const { getPriceWithCurrency } = usePrice();
   return <div className={className}>
     {cart && cart.items.length ? <>
       <CartProductsList cart={cart} products={products} addToCart={(data)=>{
@@ -36,7 +38,7 @@ const CartPageComponent: React.FunctionComponent<ICartPageProps> = ({className})
           {`Total: ${getPriceWithCurrency({price: getTotalSum({products, cart})})}`}
         </div>
         <Button text="Checkout" onClick={()=>{
-          dispatch(checkoutCart({id: cart.id}))
+          dispatch(push("/checkout"))
         }}/>
       </div>
       </>

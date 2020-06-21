@@ -11,6 +11,7 @@ interface ILoginFormProps {
   className?: string;
   onSubmit(data: LoginRequestType): void;
   initialValues?: LoginRequestType;
+  loading?: boolean;
 }
 
 const validate = (values: {
@@ -71,6 +72,7 @@ const LoginFormComponent: React.FunctionComponent<ILoginFormProps> = ({
       </FormGroup>
       <div className="form-buttons">
       <Button
+        type="submit"
         onClick={() => {
           formik.handleSubmit();
         }}
@@ -87,6 +89,12 @@ const LoginFormComponent: React.FunctionComponent<ILoginFormProps> = ({
 export const LoginForm = styled(LoginFormComponent)`
     width: 320px;
     margin: 0 auto;
+    opacity: 1;
+    transition: opacity 0.5;
+    ${props => props.loading && `
+        opacity: 0.5;
+        pointer-events: none;
+    `}
     .form-buttons{
         margin: 10px 0 0;
         display: flex;

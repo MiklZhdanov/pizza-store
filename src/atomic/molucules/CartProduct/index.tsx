@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { styled } from 'config/theme';
 import { ProductType } from 'modules/products/types';
-import { getPriceWithCurrency } from 'modules/currency/utils';
+import { usePrice } from 'modules/currency/utils';
 import { QuantityControl } from 'atomic/atoms/QuantityControl';
 
 interface ICartProductProps {
@@ -12,7 +12,9 @@ interface ICartProductProps {
 }
 
 const CartProductComponent: React.FunctionComponent<ICartProductProps> = ({className, product, addToCart, quantity}) => {
-    if(!quantity) return null
+    const { getPriceWithCurrency } = usePrice();
+
+  if(!quantity) return null
   return <div className={className}>
         <div className="cart-product-image">
         </div>

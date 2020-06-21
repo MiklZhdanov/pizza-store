@@ -13,8 +13,9 @@ interface ILoginPageProps {
 const LoginPageComponent: React.FunctionComponent<ILoginPageProps> = ({
   className,
 }) => {
-  const { user } = useSelector((state: AppState) => ({
+  const { user, loading } = useSelector((state: AppState) => ({
     user: state.auth.currentUser,
+    loading: state.auth.loading
   }));
   const dispatch = useDispatch();
 
@@ -22,7 +23,7 @@ const LoginPageComponent: React.FunctionComponent<ILoginPageProps> = ({
     <Redirect to="/" />
   ) : (
     <div className={className}>
-      <LoginForm onSubmit={(data)=>{
+      <LoginForm loading={loading} onSubmit={(data)=>{
           dispatch(login(data))
       }}/>
     </div>

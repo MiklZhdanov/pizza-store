@@ -5,10 +5,11 @@ interface IButtonProps {
   className?: string;
   text?: string;
   onClick?(): void;
+  type?: "button" | "submit" | "reset";
 }
 
-const ButtonComponent: React.FunctionComponent<IButtonProps> = ({className, onClick, text}) => {
-  return <button className={className} onClick={onClick}>
+const ButtonComponent: React.FunctionComponent<IButtonProps> = ({className, onClick, text, type="button"}) => {
+  return <button type={type} className={className} onClick={onClick}>
       {text}
   </button>
 };

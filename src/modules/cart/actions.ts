@@ -29,7 +29,17 @@ export const updateCart = (data: CartType) =>
     ]
 });
 
-export const checkoutCart = (payload: {id: number} ) => ({
+export const getCart = ({id}: {id: number}) =>
+  callApiAction({
+    api: () => api.cart.getCart({id}),
+    types: [
+      CartActionTypes.GET_CART_REQUEST,
+      CartActionTypes.GET_CART_SUCCESS,
+      CartActionTypes.GET_CART_FAILURE
+    ]
+});
+
+export const checkoutCart = (payload: {cart: CartType, delivery: string, address: string, email: string} ) => ({
   type: CartActionTypes.CHECKOUT_CART,
   payload
 });

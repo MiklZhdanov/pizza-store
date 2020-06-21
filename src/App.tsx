@@ -11,7 +11,8 @@ import { MainPage } from 'pages/Main';
 import { CartPage } from 'pages/Cart';
 import { LoginPage } from 'pages/Login';
 import { RegistrationPage } from 'pages/Registration';
-
+import { ProfilePage } from 'pages/Profile';
+import { CheckoutPage } from 'pages/Checkout';
 
 const App = () => (
   <ThemeProvider theme={theme}>
@@ -24,6 +25,8 @@ const App = () => (
            <Route exact path="/cart" render={() => (<CartPage/>)} />
            <Route exact path="/login" render={() => (<LoginPage/>)} />
            <Route exact path="/register" render={() => (<RegistrationPage/>)} />
+           <Route exact path="/profile" render={() => (<ProfilePage/>)} />
+           <Route exact path="/checkout" render={() => (<CheckoutPage/>)} />
            <Route render={() => (<div>404 - page not found</div>)} />
          </Switch>
       </BaseLayout>

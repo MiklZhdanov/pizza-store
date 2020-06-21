@@ -7,16 +7,19 @@ import { Link } from 'react-router-dom';
 import { AppState } from 'store';
 import {getTotalItems} from 'modules/cart/utils';
 import { logout } from 'modules/auth/actions';
+import { CurrencySwitcher } from 'atomic/atoms/CurrencySwitcher';
+import { selectCurrency } from 'modules/currency/actions';
 
 interface IHeaderProps {
   className?: string;
 }
 
 const HeaderComponent: React.FunctionComponent<IHeaderProps> = ({className}) => {
-  const { cart, user } = useSelector((state: AppState) => ({
+  const { cart, user, currentCurrency } = useSelector((state: AppState) => ({
     cart: state.cart.selectedCart,
     loading: state.cart.loading,
     user: state.auth.currentUser,
+    currentCurrency: state.currency.currentCurrency
   }))
   const dispatch = useDispatch();
 
@@ -29,7 +32,14 @@ const HeaderComponent: React.FunctionComponent<IHeaderProps> = ({className}) => 
               PIZZA STORE
             </Link>
           </div>
-       
+        <div  className="header-currency">
+          <CurrencySwitcher
+            currentCurrency={currentCurrency}
+            onChange={(currency)=>{
+              dispatch(selectCurrency(currency));
+            }}
+          />
+        </div>
         <div className="header-cart">
         <Link to={"/cart"}>
           <Badge text={cart && getTotalItems({cart})}>
@@ -41,7 +51,7 @@ const HeaderComponent: React.FunctionComponent<IHeaderProps> = ({className}) => 
         <div className="header-auth">
           {user ? 
             <div onClick={()=>{
-              dispatch(logout())
+              dispatch(logout());
             }}>
               Log Out
             </div>
@@ -93,5 +103,8 @@ export const Header = styled(HeaderComponent)`
     font-size: 24px;
       color: ${props => props.theme.colors.white};
     }
+  }
+  .header-currency{
+    margin-right: 40px;
   }
 `

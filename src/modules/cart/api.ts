@@ -8,4 +8,6 @@ export const cart = {
     }),
   updateCart: async (data: CartType) =>
     await request.put(`/carts/${data.id}`, data),
+  getCart: async (data: {id: number}) =>
+    await request.get(`/carts/${data.id}`)
 };
